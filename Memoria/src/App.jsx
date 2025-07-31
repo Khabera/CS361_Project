@@ -5,6 +5,7 @@ import './App.css'
 import { createTheme, ThemeProvider} from '@mui/material'
 import { BrowserRouter, Routes, Route } from 'react-router';
 import BaseLayout from './components/BaseLayout'
+import HomePage from './components/HomePage'
 
 const theme = createTheme({
   palette: {
@@ -30,12 +31,7 @@ function App() {
         <ThemeProvider theme={theme}>
         <BaseLayout>
           <Routes>
-            {/*<Route path="/" element={<HomePage />}></Route>
-            <Route path="/WorkOrders" element={<WorkOrdersPage />}></Route>
-            <Route path="/Customers" element={<CustomersPage />}></Route>
-            <Route path="/Invoices" element={<InvoicesPage />}></Route>
-            <Route path="/JobCodes" element={<JobCodesPage />}></Route>
-            <Route path="/ShopManagement" element={<ShopManagerPage />}></Route>*/}
+            <Route path="/" element={<HomePage />}></Route>
           </Routes>
         </BaseLayout>
         </ThemeProvider>

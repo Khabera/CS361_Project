@@ -32,11 +32,25 @@ const AddTrip = () => {
     setOpen(false);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries(formData.entries());
     console.log(formJson);
+    try {
+        const response = await fetch('http://localhost:54837/api/trips', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formJson)
+        });
+        if (response.ok){
+            alert('Trip Created');
+        }else{
+            alert('Failed to create Trip');
+        }
+    } catch (err) {
+        alert('Error creating trip.')
+    }
     handleClose();
   };
 
@@ -56,8 +70,8 @@ const AddTrip = () => {
               autoFocus
               required
               margin="dense"
-              id="triptitle"
-              name="triptitle"
+              id="name"
+              name="name"
               label="Trip Title"
               type="text"
               fullWidth

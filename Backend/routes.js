@@ -17,20 +17,37 @@ router.get('/api/trips', async (req, res) => {
     const db = await pool;
     const request = db.request()
     query_results = await request.query("SELECT * FROM Trips")
-    res.json(response);
+    res.json(query_results.recordset);
   } catch (err) {
+    console.log(err)
+    res.status(500).send('Error fetching trips.');
+  }
+});
+
+router.get('/api/trips/:id', async (req, res) => {
+  try {
+    const tripId = req.params.id;
+    const db = await pool;
+    const request = db.request()
+    query_results = await request.query(`SELECT * FROM Trips WHERE TripID = ${tripId}`)
+    res.json(query_results.recordset);
+  } catch (err) {
+    console.log(err)
     res.status(500).send('Error fetching trips.');
   }
 });
 
 router.post('/api/trips', async (req, res) => {
   try {
+    const {name, description, startdate, enddate} = req.body;
     const db = await pool;
     const request = db.request()
     query_results = await request.query(`INSERT INTO Trips (Name, Description, StartDate, EndDate)
-                                          VALUES(${req.name, req.description, req.startdate, req.enddate})`)
-      res.json(query_results) 
+                                          VALUES('${name}', '${description}', '${startdate}', '${enddate}');`)
+    console.log(query_results)
+    res.json(query_results) 
     } catch (err) {
+      console.log(err)
       res.status(500).send('Error adding trip')
     }
 

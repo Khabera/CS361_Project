@@ -1,0 +1,47 @@
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
+import { createTheme, ThemeProvider} from '@mui/material'
+import { BrowserRouter, Routes, Route } from 'react-router';
+import BaseLayout from './components/BaseLayout'
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1e4157',
+      light: '#9dbad2',
+      dark: '#0b2c3f'
+    },
+    secondary: {
+      main: '#57351e',
+      light: '#9f7e66',
+      dark: '#3a1b0c'
+    }
+  },
+});
+
+function App() {
+  const [count, setCount] = useState(0)
+
+  return (
+    <>
+      <BrowserRouter>
+        <ThemeProvider theme={theme}>
+        <BaseLayout>
+          <Routes>
+            {/*<Route path="/" element={<HomePage />}></Route>
+            <Route path="/WorkOrders" element={<WorkOrdersPage />}></Route>
+            <Route path="/Customers" element={<CustomersPage />}></Route>
+            <Route path="/Invoices" element={<InvoicesPage />}></Route>
+            <Route path="/JobCodes" element={<JobCodesPage />}></Route>
+            <Route path="/ShopManagement" element={<ShopManagerPage />}></Route>*/}
+          </Routes>
+        </BaseLayout>
+        </ThemeProvider>
+      </BrowserRouter>
+    </>
+  )
+}
+
+export default App

@@ -1,16 +1,11 @@
-// Citation for the following file:
-// This backend was set up with initial skeleton provided by the CS340 Documentation
-// Initial routes were written by hand, and then future routes were created by providing
-// initial implementations and existing SQL Stored Procedures to AI to create the desired route.
-// Routes were all tested and reviewed for desired functionality
-
+// The skeleton for this router was adapted from a previous project, which used a skeleton from class.
+// It was adapter to use mssql instead of mysql
 
 const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
 const {pool, sqlConfig} = require('./db');
-const sql = require('mssql')
 
 router.get('/api/trips', async (req, res) => {
   try {

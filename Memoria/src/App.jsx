@@ -6,6 +6,7 @@ import { createTheme, ThemeProvider} from '@mui/material'
 import { BrowserRouter, Routes, Route } from 'react-router';
 import BaseLayout from './components/BaseLayout'
 import HomePage from './components/HomePage'
+import Trip from './components/Trip'
 
 const theme = createTheme({
   palette: {
@@ -32,6 +33,7 @@ function App() {
         <BaseLayout>
           <Routes>
             <Route path="/" element={<HomePage />}></Route>
+            <Route path="/trips/:TripId" element={<Trip />}></Route>
           </Routes>
         </BaseLayout>
         </ThemeProvider>

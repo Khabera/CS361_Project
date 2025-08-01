@@ -66,6 +66,19 @@ router.post('/api/trips', async (req, res) => {
 
 })
 
+router.delete('/api/trips/:id', async (req, res) => {
+  try {
+    const tripId = req.params.id;
+    const db = await pool;
+    const request = db.request()
+    query_results = await request.query(`DELETE FROM Trips WHERE TripID = ${tripId}`)
+    res.status(200).send('Successfully deleted trip.');
+  } catch (err) {
+    console.log(err)
+    res.status(500).send('Error fetching trips.');
+  }
+});
+
 router.post('/api/trips/:id/items', async (req, res) => {
   try {
     const tripId = req.params.id;

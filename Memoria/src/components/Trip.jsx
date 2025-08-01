@@ -1,6 +1,6 @@
-import { Link, useParams } from "react-router"
+import { Link, useNavigate, useParams } from "react-router"
 import React from 'react';
-import { AppBar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from "@mui/material";
+import { AppBar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControlLabel, IconButton, Switch, Table, TableBody, TableCell, TableHead, TableRow, TextField, Tooltip, Typography } from "@mui/material";
 import HomeIcon from '@mui/icons-material/Home';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CheckIcon from '@mui/icons-material/Check';
@@ -15,9 +15,73 @@ const GetDateFormat = (date) => {
     }
 }
 
+function ConfirmTripDeleteDialog(trip) {
+  const [open, setOpen] = React.useState(false);
+  const navigate = useNavigate();
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleDelete = async () => {
+    console.log(trip.trip)
+    try {
+    const response = await fetch(`http://localhost:54837/api/trips/${trip.trip.TripID}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+    });
+    if (response.ok) {
+        alert('Trip Deleted Succesfully');
+        handleClose();
+        navigate('/')
+    } else {
+        alert('Failed to delete Trip');
+    }
+    } catch (err) {
+        alert('Failed to delete Trip')
+    }
+    handleClose();
+  }
+
+  return (
+    <React.Fragment>
+        <IconButton
+        onClick={handleClickOpen}>
+            <DeleteForeverIcon color='primary.light'
+      />
+        </IconButton>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Confirm Deletion of Trip?"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this trip? This action is not reversible.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleDelete} autoFocus>
+            DELETE
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </React.Fragment>
+  );
+}
+
 const AddItem = (params) => {
     const [open, setOpen] = React.useState(false);
-
+    const [addMore, setAddMore] = React.useState(false);
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -39,13 +103,18 @@ const AddItem = (params) => {
             });
             if (response.ok) {
                 alert('Trip Item Created');
+                if(addMore){
+                    event.target.reset()
+                }else{
+                    handleClose();
+                }
             } else {
                 alert('Failed to create Trip Item');
             }
         } catch (err) {
-            alert('Error creating trip.')
+            alert('Error adding trip item.')
         }
-        handleClose();
+        params.refreshData();
     };
 
     return (
@@ -84,8 +153,9 @@ const AddItem = (params) => {
                             multiline={true}
                         />
                         <DialogActions>
+                            <FormControlLabel checked={addMore} control={<Switch onChange={(event) => setAddMore(event.target.checked)}/>} label="Add More"/>
                             <Button onClick={handleClose}>Cancel</Button>
-                            <Button type="submit">Submit</Button>
+                            <Button type="submit">Add</Button>
                         </DialogActions>
                     </form>
                 </DialogContent>
@@ -147,9 +217,8 @@ const Trip = () => {
                         <HomeIcon />
                     </IconButton>
                 </Link>
-                <IconButton>
-                    <DeleteForeverIcon color='primary.light'/>
-                </IconButton>
+                <ConfirmTripDeleteDialog trip={trip}/>
+    
                 
             </AppBar>
             <Typography
@@ -178,22 +247,26 @@ const Trip = () => {
                         <TableRow>
                             <TableCell sx={{ color: 'white' }}>{item.ItemName}</TableCell>
                             <TableCell sx={{ color: 'white' }}>{item.ItemDescription}</TableCell>
-                            <TableCell sx={{ color: 'white' }}>{item.Packed ? 
-                                <IconButton color='success'
-                                onClick={() => changePackStatus(item)}>
-                                    <CheckIcon />
-                                </IconButton> : 
-                                <IconButton color='warning'
-                                onClick={() => changePackStatus(item)}> 
-                                    <CloseIcon />
-                                </IconButton>}</TableCell>
+                            <TableCell sx={{ color: 'white' }}>
+                                <Tooltip title="Pack Item. Click Item to change its packed status">
+                                    {item.Packed ? 
+                                    <IconButton color='success'
+                                    onClick={() => changePackStatus(item)}>
+                                        <CheckIcon />
+                                    </IconButton> : 
+                                    <IconButton color='warning'
+                                    onClick={() => changePackStatus(item)}> 
+                                        <CloseIcon />
+                                    </IconButton>}
+                                </Tooltip>
+                                </TableCell>
                         </TableRow>
                     ))}
                     <TableRow>
                         <TableCell></TableCell>
                         <TableCell></TableCell>
                         <TableCell sx={{ color: 'white' }}>
-                            <AddItem TripId={TripId}/>
+                            <AddItem TripId={TripId} refreshData={getTripItems}/>
                         </TableCell>
                     </TableRow>
                 </TableBody>
